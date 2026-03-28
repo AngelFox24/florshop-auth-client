@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "FlorShopAuthClient",
+    name: "florshop-auth-client",
     platforms: [
         .macOS(.v13)
     ],

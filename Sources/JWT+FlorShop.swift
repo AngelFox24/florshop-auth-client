@@ -1,7 +1,6 @@
 import NIOConcurrencyHelpers
 import Vapor
 import JWT
-import FlorShopDTOs
 
 extension Request.JWT {
     public var florshop: FlorShopAuth {
@@ -113,7 +112,7 @@ extension InternalServiceTokenPayload {
             throw Abort(.unauthorized)
         }
 
-        guard aud.value.contains(TokenAudience.internalService) else {
+        guard aud.value.contains("internal-service") else {
             throw Abort(.unauthorized)
         }
     }

@@ -1,7 +1,6 @@
 import Foundation
 import Vapor
 import JWT
-import FlorShopDTOs
 
 public struct InternalServiceTokenPayload: JWTPayload {
     public let sub: SubjectClaim           // quién es (service)

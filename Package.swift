@@ -19,10 +19,7 @@ let package = Package(
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
         // 🔵 Para generar tokens
-        .package(url: "https://github.com/vapor/jwt.git", exact: "5.1.2"),
-        // 🔵 Shared DTOs
-        .package(url: "https://github.com/AngelFox24/florshop-dtos.git", exact: "1.0.27")
-//        .package(path: "../florshop-dtos")
+        .package(url: "https://github.com/vapor/jwt.git", exact: "5.1.2")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -31,8 +28,7 @@ let package = Package(
             name: "FlorShopAuthClient",
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
-                .product(name: "JWT", package: "jwt"),
-                .product(name: "FlorShopDTOs", package: "florshop-dtos")
+                .product(name: "JWT", package: "jwt")
             ]
         ),
         .testTarget(

@@ -25,8 +25,16 @@ public struct InternalServiceTokenPayload: JWTPayload {
         self.exp = .init(value: expiration)
         self.scope = scope
     }
-
-    public func verify(using signer: some JWTAlgorithm) throws {
+    public func verify(using algorithm: some JWTKit.JWTAlgorithm) async throws {
         try exp.verifyNotExpired()
+
+        guard let issEnv = Environment.get("FLORSHOP_JWT_ISSUER"),
+              iss.value == issEnv else {
+            throw Abort(.unauthorized)
+        }
+
+        guard aud.value.contains("internal-service") else {
+            throw Abort(.unauthorized)
+        }
     }
 }

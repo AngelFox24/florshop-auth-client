@@ -26,6 +26,24 @@ extension Request.JWT {
 
             return payload
         }
+
+        public func verifyBaseToken(_ token: String) async throws -> BaseTokenPayload {
+            let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
+            let payload = try await keys.verify(token, as: BaseTokenPayload.self)
+
+            try payload.verifyClaims(_jwt._request)
+
+            return payload
+        }
+
+        public func verifyScopedToken(_ token: String) async throws -> ScopedTokenPayload {
+            let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
+            let payload = try await keys.verify(token, as: ScopedTokenPayload.self)
+
+            try payload.verifyClaims(_jwt._request)
+
+            return payload
+        }
     }
 }
 extension Application.JWT {
@@ -103,6 +121,7 @@ extension Application.JWT {
         }
     }
 }
+
 extension InternalServiceTokenPayload {
     func verifyClaims(_ req: Request) throws {
         try exp.verifyNotExpired()
@@ -115,5 +134,17 @@ extension InternalServiceTokenPayload {
         guard aud.value.contains("internal-service") else {
             throw Abort(.unauthorized)
         }
+    }
+}
+
+extension BaseTokenPayload {
+    func verifyClaims(_ req: Request) throws {
+        try exp.verifyNotExpired()
+    }
+}
+
+extension ScopedTokenPayload {
+    func verifyClaims(_ req: Request) throws {
+        try exp.verifyNotExpired()
     }
 }

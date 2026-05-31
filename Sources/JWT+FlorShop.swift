@@ -27,6 +27,14 @@ extension Request.JWT {
             return payload
         }
 
+        public func verifyBaseToken() async throws -> BaseTokenPayload {
+            guard let token = _jwt._request.headers.bearerAuthorization?.token else {
+                throw Abort(.unauthorized)
+            }
+            
+            return try await verifyBaseToken(token)
+        }
+
         public func verifyBaseToken(_ token: String) async throws -> BaseTokenPayload {
             let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
             let payload = try await keys.verify(token, as: BaseTokenPayload.self)
@@ -34,6 +42,14 @@ extension Request.JWT {
             try payload.verifyClaims(_jwt._request)
 
             return payload
+        }
+
+        public func verifyScopedToken() async throws -> ScopedTokenPayload {
+            guard let token = _jwt._request.headers.bearerAuthorization?.token else {
+                throw Abort(.unauthorized)
+            }
+            
+            return try await verifyScopedToken(token)
         }
 
         public func verifyScopedToken(_ token: String) async throws -> ScopedTokenPayload {

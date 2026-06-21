@@ -14,50 +14,41 @@ extension Request.JWT {
             guard let token = _jwt._request.headers.bearerAuthorization?.token else {
                 throw Abort(.unauthorized)
             }
-
             return try await verify(token)
         }
 
         public func verify(_ token: String) async throws -> InternalServiceTokenPayload {
             let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
             let payload = try await keys.verify(token, as: InternalServiceTokenPayload.self)
-
             try payload.verifyClaims(_jwt._request)
-
             return payload
         }
 
         public func verifyBaseToken() async throws -> BaseTokenPayload {
-            guard let token = _jwt._request.headers.bearerAuthorization?.token else {
-                throw Abort(.unauthorized)
+            guard let token = _jwt._request.headers.first(name: "X-User-BaseToken") else {
+                throw Abort(.unauthorized, reason: "Missing Base Token")
             }
-            
             return try await verifyBaseToken(token)
         }
 
         public func verifyBaseToken(_ token: String) async throws -> BaseTokenPayload {
             let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
             let payload = try await keys.verify(token, as: BaseTokenPayload.self)
-
             try payload.verifyClaims(_jwt._request)
-
             return payload
         }
 
         public func verifyScopedToken() async throws -> ScopedTokenPayload {
-            guard let token = _jwt._request.headers.bearerAuthorization?.token else {
-                throw Abort(.unauthorized)
+            guard let token = _jwt._request.headers.first(name: "X-User-ScopedToken") else {
+                throw Abort(.unauthorized, reason: "Missing Scoped Token")
             }
-            
             return try await verifyScopedToken(token)
         }
 
         public func verifyScopedToken(_ token: String) async throws -> ScopedTokenPayload {
             let keys = try await _jwt._request.application.jwt.florshop.keys(on: _jwt._request)
             let payload = try await keys.verify(token, as: ScopedTokenPayload.self)
-
             try payload.verifyClaims(_jwt._request)
-
             return payload
         }
     }
